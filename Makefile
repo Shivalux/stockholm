@@ -1,18 +1,31 @@
-NAME	= stockholm
-KEY 	= 
+NAME	= main.py
+VERSION	= --version
+HELP	= --help
+SILENT	= --silent
+REVERSE = --reverse
+ARGS	= $(wordlist 2, $(words $(MAKECMDGOALS)), $(MAKECMDGOALS))
 
 $(NAME):
-	python3 main.py
+	@python3 $(NAME)
+%:
+	@:
 
-run: $(NAME)
+silent:
+	@python3 $(NAME) $(SILENT) $(ARGS)
+
+activate:
+	@python3 $(NAME) $(ARGS)
 
 version:
-	python3  main.py --version
+	@python3  $(NAME) $(VERSION)
+
+help:
+	@python3 $(NAME) $(HELP)
 
 reverse:
-	python3 main.py --reverse $(KEY)
+	@python3 $(NAME) $(REVERSE) $(ARGS)
 
-key:
-	@echo $(KEY)
+qreverse:
+	@python3 $(NAME) $(REVERSE) $(SILENT) $(ARGS)
 
-PHONEY: reverse version key run
+.PHONY: reverse version activate silent qreverse help
