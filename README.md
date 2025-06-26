@@ -17,7 +17,7 @@
         IV   = os.urandom(12)
         SALT = os.urandom(16+)
     • Optional set the value of key in the main.py:
-        KEY = b'xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx'
+        KEY = "xxxxxxxxxxxxxxxx"
 
 # Usege:
     bash stockholm [-h] [-v] [-s] [-r KEY] [KEY]

