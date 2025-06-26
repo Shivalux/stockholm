@@ -10,12 +10,17 @@
 
  # Installation:
     • Clone the project into your HOME directory and name the directory `infection`:
-        <code> ``` bash stockholm [-h] [-v] [-s] [-r KEY] [KEY] ``` </code>
+        bash stockholm [-h] [-v] [-s] [-r KEY] [KEY]
     • Install the required Python packages:
-        <code> ``` bash stockholm [-h] [-v] [-s] [-r KEY] [KEY] ``` </code>
+        bash stockholm [-h] [-v] [-s] [-r KEY] [KEY]
+    • Set the value of SALT and IV in main.py by take the result of os.urandom():
+        IV   = os.urandom(12)
+        SALT = os.urandom(16+)
+    • Optional set the value of key in the main.py:
+        KEY = b'xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx'
 
 # Usege:
-    <pre> ``` bash stockholm [-h] [-v] [-s] [-r KEY] [KEY] ``` </pre>
+    bash stockholm [-h] [-v] [-s] [-r KEY] [KEY]
 
 # Option:
 | Option                  | Description                                      |

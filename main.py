@@ -73,7 +73,7 @@ def main() -> int:
                 return error("Invalid key format.", 1)
             recusive_directory_and(decryption, called_path, args.silent, args.reverse.encode('utf-8'))
         else:
-            recusive_directory_and(encryption, called_path, args.silent, args.key if args.key else KEY)
+            recusive_directory_and(encryption, called_path, args.silent, args.key.encode('utf-8') if args.key else KEY)
     except Exception as e:
         return error(e, 1)
     except KeyboardInterrupt:
@@ -93,7 +93,8 @@ def recusive_directory_and(func, directory: Path, silent: bool, key: str) -> Non
         if item.is_file():
             func(item, key, silent)
         else:
-            print(f"{Fore.YELLOW}[directory]{Style.RESET_ALL} {item.absolute()}")
+            if not silent:
+                print(f"{Fore.YELLOW}[directory]{Style.RESET_ALL} {item.absolute()}")
             recusive_directory_and(func, item, silent, key)
 
 def encryption(file: Path, key: str, silent: bool):
@@ -134,7 +135,7 @@ def decryption(file: Path, key: str, silent: bool):
 def arguments_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(prog="stockholm", formatter_class=argparse.RawDescriptionHelpFormatter,
         description=DESCRIPTION, epilog=EPILOG)
-    parser.add_argument("-v", "--version", action="version", version="%(prog)s v.1.0.1",
+    parser.add_argument("-v", "--version", action="version", version="%(prog)s v.1.0.142",
                         help="Show the version of the program.")
     parser.add_argument("-s", "--silent", action="store_true",
                         help="Run the program without producing any log output." )

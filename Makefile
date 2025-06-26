@@ -26,6 +26,6 @@ reverse:
 	@python3 $(NAME) $(REVERSE) $(ARGS)
 
 qreverse:
-	@python3 $(NAME) $(REVERSE) $(SILENT) $(ARGS)
+	@python3 $(NAME) $(SILENT) $(REVERSE) $(ARGS)
 
 .PHONY: reverse version activate silent qreverse help
