@@ -8,7 +8,7 @@
         • The provided key must be at least 16 characters long.
         • This program targets common file extensions associated with ransomware like WannaCry.
 
-Installation:
+ # Installation:
     • Clone the project into your HOME directory and name the directory `infection`:
         <code> ``` bash stockholm [-h] [-v] [-s] [-r KEY] [KEY] ``` </code>
     • Install the required Python packages:
