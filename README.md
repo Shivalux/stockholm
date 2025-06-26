@@ -10,9 +10,9 @@
 
  # Installation:
     • Clone the project into your HOME directory and name the directory `infection`:
-        bash stockholm [-h] [-v] [-s] [-r KEY] [KEY]
+        git clone <repository-url> ~/infection
     • Install the required Python packages:
-        bash stockholm [-h] [-v] [-s] [-r KEY] [KEY]
+        pip install -r requirements.txt
     • Set the value of SALT and IV in main.py by take the result of os.urandom():
         IV   = os.urandom(12)
         SALT = os.urandom(16+)
@@ -35,6 +35,7 @@
 | --------------------- | ------------------------------------------------------------------- |
 | `make help`           | Show this help message and usage                                    |
 | `make version`        | Show the version of the program                                     |
+| `make setup`          | Setup the requirement framework
 | `make silent [KEY]`   | Run the program silently (no log output), optionally provide KEY    |
 | `make activate [KEY]` | Encrypt all files in the target directory using the provided KEY    |
 | `make reverse [KEY]`  | Reverse the encryption using the given KEY                          |
